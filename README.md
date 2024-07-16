@@ -1,66 +1,47 @@
-# EDC Samples
+# EDC Samples for eventing system
 
-This repository provides samples for the Eclipse Dataspace Components (EDC) project, that aim to support the
-onboarding process for new community members. The samples are sorted by scope for easy navigation and serve as a
-step-by-step guide for getting familiar with the project. The code and a detailed documentation for each sample reside
-in the respective module.
+This repository provides examples of how to use the EDC connector event system which is explained in the [developer documentation](https://github.com/eclipse-edc/Connector/blob/main/docs/developer/events.md).
 
-## Prerequisites
+As source code, the repository [Samples](https://github.com/eclipse-edc/Samples) of Eclipse EDC has been cloned. To speed up the compilation process, only [Transfer Samples](https://github.com/eclipse-edc/Samples/blob/main/transfer/README.md) has been used, so the rest of the examples have been removed.
 
-The samples assume a working knowledge of the **EDC nomenclature**. If you do not know about the EDC nomenclature we
-strongly advise reading the [documentation](https://eclipse-edc.github.io/docs/#/) and/or watching the
-[introductory videos](https://www.youtube.com/@eclipsedataspaceconnector9622/featured).
+# Event sample
 
-Also, a working knowledge of **Git**, **Gradle**, **Java** and **HTTP** is presumed.
+In this basic sample a service extension is created in the `ExampleEventExtension.java` file. Inside this extension the subscriber of the `ExampleEventSubscriber()` event is called. This subscriber is defined in the `ExampleEventSubscriber.java` file. For this sample, any event occurring in the connector will execute `ExampleEventSubscriber()` and the type of event that has produced its execution will be printed.
 
-We'll assume that you've just checked out the samples code base and have **Java 17+** installed on your development
-machine. If not, please download and install JDK 17+ for your OS.
+### 0. Prerequisites
 
-Command examples in this document will use the `bash` syntax and use Unix-style paths, but any other shell should be
-fine as well. If you're using Windows you either need to adapt the paths or use WSL2.
+Following the sample [Write your first extension](https://github.com/eclipse-edc/Samples/blob/main/basic/basic-02-health-endpoint/README.md), the `ExampleEventExtension.java` and `ExampleEventSubscriber.java` files have been created inside the `transfer/transfer-00-prerequisites/connector/src/main/java/org/eclipse/edc/sample/extension/event/` directory. The created extension has also been added to the `org.eclipse.edc.spi.system.ServiceExtension` file located in the `transfer/transfer-00-prerequisites/connector/src/main/resources/META-INF/services/` directory.
 
-## Scopes
+Clone the modified repository with the `event` tag
 
-The samples are separated by scope, where each scope has a different focus. Depending on what you want to learn more
-about, you can choose the scope to look at. More scopes may be added in the future, so be sure to check back regularly.
+```bash
+git clone -b event https://github.com/johnnychoque/edc-conn-modif.git
+```
+### 1. Build and run the modified connector
 
-> **If you are new to the project, it is advisable to start with the `basic` scope. The samples in this scope teach the
-> very basics about using the EDC framework, which are presupposed in all other scopes!**
+Run the commands of [Transfer sample 00: Prerequisites](https://github.com/eclipse-edc/Samples/blob/main/transfer/transfer-00-prerequisites/README.md) to build and execute the modified comector.
 
-### [Basic](./basic/README.md)
+```bash
+./gradlew transfer:transfer-00-prerequisites:connector:build
+```
 
-The samples in this scope teach you how to get started with the EDC framework. You will e.g. learn how to set up and run
-a connector and how to create your own extensions. What you learn here will be used in all other samples. Click the
-link above to learn about the basic samples in more detail.
+Execute the connector as Provider for initial testing
 
-All basic samples are located in the `basic` directory.
+```bash
+java -Dedc.keystore=transfer/transfer-00-prerequisites/resources/certs/cert.pfx -Dedc.keystore.password=123456 -Dedc.fs.config=transfer/transfer-00-prerequisites/resources/configuration/provider-configuration.properties -jar transfer/transfer-00-prerequisites/connector/build/libs/connector.jar
+```
+### 2. Test the modified connector
 
-### [Transfer](./transfer/README.md)
+Following the sample [Transfer sample 01: Negotiation](https://github.com/eclipse-edc/Samples/blob/main/transfer/transfer-01-negotiation/README.md), open another terminal and create an asset on the Provider by running:
 
-This scope revolves around the topic of data transfer. In these samples you will learn how a data transfer works in the
-EDC and run different transfer scenarios. Click the link above to learn about the transfer samples in more detail.
+```bash
+curl -d @transfer/transfer-01-negotiation/resources/create-asset.json \
+  -H 'content-type: application/json' http://localhost:19193/management/v3/assets \
+  -s | jq
+```
+The following message will be displayed on the terminal:
 
-All transfer samples are located in the `transfer` directory.
-
-### [Advanced](./advanced/README.md)
-
-Collection of advanced topics regarding the EDC framework.
-Click the link above to learn about the transfer samples in more detail.
-
-All transfer samples are located in the `advanced` directory.
-
-### [Policy](./policy/README.md)
-
-These samples deal with the topic of policies and their evaluation and enforcement. They will teach you what
-configurations you need to make to enable the evaluation of specific policy rules and constraint and how to provide
-custom code for their enforcement.
-
-All policy samples are located in the `policy` directory.
-
-## Contributing
-
-See [how to contribute](https://github.com/eclipse-edc/docs/blob/main/CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the Apache License 2.0 - see [here](LICENSE) for details.
+```bash
+>>>>>>>>>>>>>> EVENT >>>>>>>>>>>>>
+org.eclipse.edc.connector.controlplane.asset.spi.event.AssetCreated@7fb52601
+```
