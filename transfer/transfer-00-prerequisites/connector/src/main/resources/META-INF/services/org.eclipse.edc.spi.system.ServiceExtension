@@ -1,2 +1,2 @@
 org.eclipse.edc.sample.runtime.SeedVaultExtension
-org.eclipse.edc.sample.extension.event.ExampleEventExtension
+org.eclipse.edc.sample.extension.event.NegotiationEventExtension
