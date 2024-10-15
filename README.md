@@ -20,7 +20,7 @@ git clone -b event https://github.com/johnnychoque/edc-conn-modif.git
 
 ### 1. Build and run the modified connector
 
-Run the commands of [Transfer sample 00: Prerequisites](https://github.com/eclipse-edc/Samples/blob/main/transfer/transfer-00-prerequisites/README.md) to build and execute the modified comector.
+Run the commands of [Transfer sample 00: Prerequisites](https://github.com/eclipse-edc/Samples/blob/main/transfer/transfer-00-prerequisites/README.md) to build and execute the modified connector.
 
 ```bash
 cd edc-conn-modif
